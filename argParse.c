@@ -4,7 +4,7 @@
 #include <limits.h>
 #include "argParse.h"
 
-#define DEFAULT_PADSIZE 65536
+#define DEFAULT_PADSIZE 1024
 #define NOT_FOUND -1
 
 void pUseExit() {
