@@ -66,7 +66,7 @@ void decrypt(ArgInfo *argInfoP) {
 void seedRand() {
    time_t seed;
 
-   if ((seed= time(NULL)) == -1) {
+   if ((seed = time(NULL)) == -1) {
       fprintf(stderr, "Unable to retrieve system time\n");
       exit(EXIT_FAILURE);
    }
