@@ -101,30 +101,33 @@ void parsePad(int argc, char *argv[], ArgInfo *argInfoP) {
    if ((ppos = posInArgv(argc, argv, "-p")) == NOT_FOUND) {
       pUseExit();
    }
-   else {
-      argInfoP -> padFile = openArgFile(argc, argv, ppos, "w");
-      remainingArgs -= 2;
 
-      if (argc - 1 < ppos + 2) {
-         argInfoP -> padSize = DEFAULT_PADSIZE;
-      }
-      else if (strcmp(argv[ppos + 2], "-g") == 0) {
-         argInfoP -> padSize = DEFAULT_PADSIZE;
-      }
-      else {
-         if (sscanf(argv[ppos + 2], "%d", &(argInfoP -> padSize)) == 0) {
-            pUseExit();
-         }
-         else if (argInfoP -> padSize <= 0) {
-            fprintf(stderr, "padsize must be greater than 0 and at most %d\n", 
-               INT_MAX);
-            pUseExit();
-         }
-         remainingArgs -= 1;
-      }
+   argInfoP -> padFile = openArgFile(argc, argv, ppos, "w");
+   remainingArgs -= 2;
+
+   if (argc - 1 < ppos + 2) {
+      /* If there are no other args after padname in argv, use default size */
+      argInfoP -> padSize = DEFAULT_PADSIZE;
    }
+   else if (strcmp(argv[ppos + 2], "-g") == 0) {
+      /* If the arg following padname is the "-g" flag, use default size */
+      argInfoP -> padSize = DEFAULT_PADSIZE;
+   }
+   /* Try scanning the arg following padname as an int */
+   else if (sscanf(argv[ppos + 2], "%d", &(argInfoP -> padSize)) == 0) {
+      /* If the arg following padname can't be scanned as an int */
+      pUseExit();
+   }
+   else if (argInfoP -> padSize <= 0) {
+      /* If padsize is invalid */
+      fprintf(stderr, "padsize must be greater than 0 and at most %d\n", 
+         INT_MAX);
+      pUseExit();
+   }
+   remainingArgs -= 1;
 
    if (remainingArgs > 0) {
+      /* If extra args are given in argv */
       pUseExit();
    }
 }
