@@ -30,6 +30,13 @@ void writeByte(unsigned char inByte, FILE *out) {
    }
 }
 
+void printPadSizeWarning() {
+   fprintf(stderr, "Warning: The pad being used is smaller than the"); 
+   fprintf(stderr, " data being encrypted\n");
+   fprintf(stderr, "         To ensure perfect secrecy, use a larger");
+   fprintf(stderr, " pad\n");
+}
+
 void encrypt(ArgInfo *argInfoP) {
    int c;
    unsigned char inByte, shiftBy, warningShown = 0;
@@ -38,13 +45,11 @@ void encrypt(ArgInfo *argInfoP) {
    while ((c = getc(argInfoP -> inFile)) != EOF) {
       inByte = c;
       if (getShift(argInfoP, &shiftBy) == RECYCLE && !warningShown) {
-         fprintf(stderr, "Warning: The pad being used is shorter than the"); 
-         fprintf(stderr, " data being encrypted\n");
-         fprintf(stderr, "         To ensure perfect secrecy, use a longer");
-         fprintf(stderr, " pad\n");
-
+         /* If end of pad reached before encryption completes, print warning */
+         printPadSizeWarning();
          warningShown = 1;
       }
+
       inByte += shiftBy;
       writeByte(inByte, argInfoP -> outFile);
    }
