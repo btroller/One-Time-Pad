@@ -71,23 +71,19 @@ void decrypt(ArgInfo *argInfoP) {
    }
 }
 
-void seedRand() {
-   time_t seed;
-
-   if ((seed = time(NULL)) == -1) {
-      fprintf(stderr, "Unable to retrieve system time\n");
-      exit(EXIT_FAILURE);
-   }
-   srand(seed);
-}
-
 void generatePad(ArgInfo *argInfoP) {
+   FILE *devRandom;
    int byteCount;
 
-   seedRand();
+   /* Open /dev/random as file */
+   if ((devRandom = fopen("/dev/random", "r")) == NULL) {
+      fprintf(stderr, "Unable to open /dev/random\n");
+      exit(EXIT_FAILURE);
+   }
 
+   /* Write padsize random bytes from /dev/random to padfile */
    for (byteCount = 0; byteCount < argInfoP -> padSize; byteCount++) {
-      writeByte(rand(), argInfoP -> padFile);
+      writeByte(getc(devRandom), argInfoP -> padFile);
    }
 }
 

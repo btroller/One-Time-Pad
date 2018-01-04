@@ -15,7 +15,7 @@ To use OTP, invoke it with one of the following formats:
 `otp -g -p padname [padsize]` to generate a padfile named `padname` of size `padsize`, where `padsize` is in bytes.
 
 ## Implementation
-To generate pads, OTP uses C's `rand()` function seeded with the current time. If `padsize` is not given, a default size of 1 KiB is used.
+To generate pads, OTP reads `padsize` bytes from `/dev/random` and writes them directly to a file of name `padname`. If `padsize` is not given, a default size of 1 KiB is used.
 
 To encrypt data, OTP adds each input byte to its corresponding byte in the pad file and writes the result to the output file. If the given pad file is not as long as the input, a warning about perfect secrecy is printed to stderr and the pad is used again from its beginning.
 
