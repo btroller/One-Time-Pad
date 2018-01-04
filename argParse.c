@@ -53,7 +53,7 @@ FILE *openArgFile(int argc, char *argv[], int pos, char *mode) {
 void checkPadFileEmpty(ArgInfo *argInfoP) {
    if (getc(argInfoP -> padFile) == EOF) {
       fprintf(stderr, "Unable to read from padfile\n");
-      fprintf(stderr, "Make sure you have permission to read the padfile ");
+      fprintf(stderr, "Make sure you have permission to read padfile ");
       fprintf(stderr, "and that it's not empty\n");
       exit(EXIT_FAILURE);
    }
@@ -163,6 +163,7 @@ void parseArgs(int argc, char *argv[], ArgInfo *argInfoP) {
          parsePad(argc, argv, argInfoP);
          break;
       default:
+         /* If valid operation flag is not found in argv */
          pUseExit();
          break;
    }
