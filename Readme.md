@@ -1,7 +1,10 @@
 # OTP
 
 ## Introduction
-OTP is a simple implementation of a [one-time pad](https://en.wikipedia.org/wiki/One-time_pad) generating, encrypting, and decrypting tool. To use OTP, invoke it with one of the following formats:
+OTP is a simple C-based tool which can pseudorandomly generate [one-time pads](https://en.wikipedia.org/wiki/One-time_pad), as well as encrypt and decrypt data using them.
+
+## Use
+To use OTP, invoke it with one of the following formats:
 
 **Note:** If not given, `infile` and `outfile` default to `stdin` and `stdout`, respectively.
 
@@ -12,7 +15,7 @@ OTP is a simple implementation of a [one-time pad](https://en.wikipedia.org/wiki
 `otp -g -p padname [padsize]` to generate a padfile named `padname` of size `padsize`, where `padsize` is in bytes.
 
 ## Implementation
-To generate pads, OTP uses C's `rand()` function seeded with the current time. If  `padsize` is not given, a default size of 1 KiB is used.
+To generate pads, OTP uses C's `rand()` function seeded with the current time. If `padsize` is not given, a default size of 1 KiB is used.
 
 To encrypt data, OTP adds each input byte to its corresponding byte in the pad file and writes the result to the output file. If the given pad file is not as long as the input, a warning about perfect secrecy is printed to stderr and the pad is used again from its beginning.
 
@@ -21,7 +24,4 @@ To decrypt a file, OTP reverses the encryption process by subtracting the corres
 **Note:** Though OTP can take input from `stdin` and write output to `stdout`, it is not intended for use as a tool to encrypt a line at a time by hand -- its `stdin`/`stdout` support is only intended to be used for redirection. The results of encryption would most likely be useless, as unprintable characters will display as '?' in a terminal, not revealing a byte's value.
 
 ## Installation
-To install OTP, clone this repository, change to its directory, and use `make` to compile it. 
-
-Invoke it as described above in the introduction.
-
+To install OTP, clone this repository, change to its directory, and use `make` to compile. 
