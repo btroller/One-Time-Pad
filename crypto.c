@@ -9,7 +9,9 @@
 unsigned char getShift(ArgInfo *argInfoP, unsigned char *shiftp) {
    int c;
 
+   /* Get the next char in padfile */
    if ((c = getc(argInfoP -> padFile)) == EOF) {
+      /* If end of padfile is reached, rewind and start from its beginning */
       rewind(argInfoP -> padFile);
       c = getc(argInfoP -> padFile);
       *shiftp = (unsigned char)c;
@@ -44,6 +46,7 @@ void encrypt(ArgInfo *argInfoP) {
    /* Read in another char from inFile */
    while ((c = getc(argInfoP -> inFile)) != EOF) {
       inByte = c;
+      /* Get next byte from padfile */
       if (getShift(argInfoP, &shiftBy) == RECYCLE && !warningShown) {
          /* If end of pad reached before encryption completes, print warning */
          printPadSizeWarning();
