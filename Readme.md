@@ -21,7 +21,7 @@ To encrypt data, OTP adds each input byte to its corresponding byte in the pad f
 
 To decrypt a file, OTP reverses the encryption process by subtracting the corresponding byte in the pad from the encrypted file and writing to the output file. If the end of the pad is reached before the output file is fully decrypted, the pad is reused from its beginning.
 
-**Note:** Though OTP can take input from `stdin` and write output to `stdout`, it is not intended for use as a tool to encrypt a line at a time by hand -- its `stdin`/`stdout` support is only intended to be used for redirection. The results of encryption would most likely be useless, as unprintable characters will display as '?' in a terminal, not revealing a byte's value.
+**Note:** Though OTP can take input from `stdin` and write output to `stdout`, it is not intended for use as a tool to encrypt a line at a time by hand -- its `stdin`/`stdout` support is only intended to be used for redirection. The results of encryption would most likely be useless, as unprintable characters will display as '?' in a terminal, not revealing an encrypted byte's value.
 
 ## Installation
 To install OTP, clone this repository, change to its directory, and use `make` to compile. 
