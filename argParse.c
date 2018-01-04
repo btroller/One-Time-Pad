@@ -26,11 +26,11 @@ FILE *openFile(char *fileName, char *mode) {
 }
 
 int posInArgv(int argc, char *argv[], char *toFind) {
-   int i;
+   int argPos;
 
-   for (i = 0; i < argc; i++) {
-      if (strcmp(argv[i], toFind) == 0) {
-         return i;
+   for (argPos = 0; argPos < argc; argPos++) {
+      if (strcmp(argv[argPos], toFind) == 0) {
+         return argPos;
       }
    }
 
