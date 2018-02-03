@@ -42,7 +42,6 @@ otp
 *.su
 *.idb
 *.pdb
-*.in
 
 # Kernel Module Compile Results
 *.mod*
