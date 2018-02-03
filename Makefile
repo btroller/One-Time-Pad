@@ -1,18 +1,18 @@
-TARGET   = otp
-CC       = gcc
-CCFLAGS  = -std=c89 -pedantic -Wall -Werror
-LDFLAGS  = -lm
-SOURCES  = $(wildcard *.c)
-INCLUDES = $(wildcard *.h)
-OBJECTS  = $(SOURCES:.c=.o)
+TARGET  = otp
+CC      = gcc
+CCFLAGS = -std=c89 -pedantic -Wall -Werror
+LDFLAGS = -lm
+SOURCES = $(wildcard *.c)
+HEADERS = $(wildcard *.h)
+OBJECTS = $(SOURCES:.c=.o)
 
-all:$(TARGET)
+all: $(TARGET)
 
-$(TARGET):$(OBJECTS)
+$(TARGET): $(OBJECTS)
 	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJECTS)
 
-$(OBJECTS):$(SOURCES) $(INCLUDES)
+$(OBJECTS): $(SOURCES) $(HEADERS)
 	$(CC) -c $(CCFLAGS) $(SOURCES)
 
 clean:
-	rm -f $(TARGET) $(OBJECTS)
+	rm $(TARGET) $(OBJECTS)
