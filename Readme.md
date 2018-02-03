@@ -1,4 +1,4 @@
-# OTP
+# OTP [![Build Status](https://travis-ci.org/btroller/One-Time-Pad.svg?branch=master)](https://travis-ci.org/btroller/One-Time-Pad)
 
 ## Introduction
 OTP is a simple C-based tool for pseudorandomly generating [one-time pads](https://en.wikipedia.org/wiki/One-time_pad), as well as encrypting and decrypting data using them.
