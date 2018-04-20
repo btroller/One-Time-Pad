@@ -25,7 +25,7 @@ To decrypt a file, OTP reverses the encryption process by subtracting the corres
 
 ## Requirements
 
-* `gcc` or `cmake`
+* `gcc` or `clang`
 * C standard library
 * `make`
 
