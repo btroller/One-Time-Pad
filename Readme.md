@@ -23,5 +23,10 @@ To decrypt a file, OTP reverses the encryption process by subtracting the corres
 
 **Note:** Though OTP can take input from `stdin` and write output to `stdout`, it is not intended for use as a tool to encrypt a line at a time by hand -- its `stdin`/`stdout` support is only intended to be used for redirection. The results of encryption would most likely be useless, as unprintable characters will display as '?' in a terminal, not revealing an encrypted byte's value.
 
+## Requirements
+
+* `gcc`, `clang`, or similar C compiler
+* `make`
+
 ## Installation
-To install OTP, clone this repository, change to its directory, and use `make` to compile. 
+To compile OTP, clone this repository, change to its directory, and use `make` to compile.
