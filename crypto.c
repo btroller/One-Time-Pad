@@ -1,11 +1,15 @@
 /* TODO: Deal with <sys/random.h> error in build */
-
 #include "crypto.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/random.h>
 #include <time.h>
-#include <unistd.h>
+#ifdef __APPLE__
+   /* Needed for getentropy(), but doesn't exist on Linux */
+   #include <sys/random.h>
+#else
+   /* Needed for getentropy() on Linux systems */
+   #include <unistd.h>
+#endif
 
 #define RECYCLE 1
 #define NO_RECYCLE 0
