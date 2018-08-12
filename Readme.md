@@ -27,7 +27,8 @@ To decrypt a file, OTP reverses the encryption process by subtracting the corres
 
 ## Requirements
 
-* `gcc`, `clang`, or similar C compiler
+* Support for `getentropy()` defined in `sys/random.h`, introduced in glibc 2.25 in February of 2017 (for instance, only Ubuntu 17.10 and on support it)
+* `gcc`/`clang` compatable C compiler
 * `make`
 
 ## Installation
