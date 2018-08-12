@@ -1,9 +1,9 @@
 # OTP [![Build Status](https://travis-ci.org/btroller/One-Time-Pad.svg?branch=master)](https://travis-ci.org/btroller/One-Time-Pad)
 
-## **NOTE:** Recent builds have taken very long to generate one-time pads on non-macOS systems
-
 ## Introduction
 OTP is a simple C-based tool for pseudorandomly generating [one-time pads](https://en.wikipedia.org/wiki/One-time_pad), as well as encrypting and decrypting data using them.
+
+**Don't use this tool for anything serious.** I'm no expert in computer security or cryptography. The operation of adding and subtracting bytes to encrypt and decrypt from pads is simple enough, but still could be flawed. This tool **definitley** doesn't generate truly random pads.
 
 ## Use
 To use OTP, invoke it with one of the following formats:
@@ -17,7 +17,7 @@ To use OTP, invoke it with one of the following formats:
 `otp -g -p padname [padsize]` to generate a padfile named `padname` of size `padsize`, where `padsize` is in bytes.
 
 ## Implementation
-To generate pads, OTP reads `padsize` bytes from `/dev/random` and writes them directly to a file of name `padname`. If `padsize` is not given, a default size of 1 KiB is used.
+To generate pads, OTP gets data from the Linux- and macOS-provided function/syscall `getentropy()` and writes it directly to a file of name `padname`. If `padsize` is not given, a default size of 1 KiB is used.
 
 To encrypt data, OTP adds each input byte to its corresponding byte in the pad file and writes the result to the output file. If the given pad file is not as long as the input, a warning about perfect secrecy is printed to `stderr` and the pad is used again from its beginning.
 
