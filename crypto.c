@@ -1,3 +1,5 @@
+/* TODO: Deal with <sys/random.h> error in build */
+
 #include "crypto.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -97,13 +99,6 @@ void generatePad(ArgInfo *argInfoP) {
          exit(EXIT_FAILURE);
       }
    }
-
-   /* TODO: REMOVE Write padsize random bytes from /dev/random to padfile */
-   /*
-   for (byteCount = 0; byteCount < argInfoP -> padSize; byteCount++) {
-      writeByte(getc(devRandom), argInfoP -> padFile);
-   }
-   */
 }
 
 void evalArgs(ArgInfo *argInfoP) {
