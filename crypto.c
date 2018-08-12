@@ -1,10 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <unistd.h>
+#include <sys/random.h>
 #include "crypto.h"
 
 #define RECYCLE 1
 #define NO_RECYCLE 0
+#define MAX_GETENTROPY_LEN 256
 
 unsigned char getShift(ArgInfo *argInfoP, unsigned char *shiftp) {
    int c;
@@ -39,7 +42,7 @@ void printPadSizeWarning() {
    fprintf(stderr, " pad\n");
 }
 
-void encrypt(ArgInfo *argInfoP) {
+void otp_encrypt(ArgInfo *argInfoP) {
    int c;
    unsigned char inByte, shiftBy, warningShown = 0;
 
@@ -72,26 +75,39 @@ void decrypt(ArgInfo *argInfoP) {
 }
 
 void generatePad(ArgInfo *argInfoP) {
-   FILE *devRandom;
-   int byteCount;
+   int numBytesWritten, numBytesToGet;
+   unsigned char randBits[MAX_GETENTROPY_LEN];
 
-   /* Open /dev/random as file */
-   if ((devRandom = fopen("/dev/random", "r")) == NULL) {
-      fprintf(stderr, "Unable to open /dev/random\n");
-      exit(EXIT_FAILURE);
+   for (numBytesWritten= 0; numBytesWritten < argInfoP -> padSize; numBytesWritten += MAX_GETENTROPY_LEN) {
+      if ((numBytesToGet = argInfoP->padSize - numBytesWritten) > MAX_GETENTROPY_LEN) {
+         numBytesToGet = MAX_GETENTROPY_LEN;
+      }
+
+      /* Get max possible number of random bytes */
+      if (getentropy(randBits, numBytesToGet) == -1) {
+         perror(NULL);
+         exit(EXIT_FAILURE);
+      }
+
+      if (fwrite(randBits, 1, numBytesToGet, argInfoP->padFile) < numBytesToGet) {
+         perror(NULL);
+         exit(EXIT_FAILURE);
+      }
    }
 
-   /* Write padsize random bytes from /dev/random to padfile */
+   /* TODO: REMOVE Write padsize random bytes from /dev/random to padfile */
+   /*
    for (byteCount = 0; byteCount < argInfoP -> padSize; byteCount++) {
       writeByte(getc(devRandom), argInfoP -> padFile);
    }
+   */
 }
 
 void evalArgs(ArgInfo *argInfoP) {
    /* Note: It's not possible for op to be anything other than e, d, or g */
    switch (argInfoP -> op) {
       case 'e':
-         encrypt(argInfoP);
+         otp_encrypt(argInfoP);
          break;
       case 'd':
          decrypt(argInfoP);
