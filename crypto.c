@@ -8,6 +8,7 @@
 #else
    /* Needed for getentropy() on Linux systems */
    #include <unistd.h>
+   int getentropy(void *buffer, size_t length);
 #endif
 
 #define RECYCLE 1
