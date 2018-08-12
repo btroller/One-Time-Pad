@@ -1,5 +1,4 @@
 TARGET  = otp
-CC      = gcc
 CCFLAGS = -std=c89 -pedantic -Wall -Werror
 LDFLAGS = -lm
 SOURCES = $(wildcard *.c)

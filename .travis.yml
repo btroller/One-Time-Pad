@@ -1,7 +1,5 @@
 os: 
   - osx
-  - linux
-dist: trusty
 sudo: false
 language: c
 compiler:

@@ -2,14 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#ifdef __APPLE__
-   /* Needed for getentropy(), but doesn't exist on Linux */
-   #include <sys/random.h>
-#else
-   /* Needed for getentropy() on Linux systems */
-   #include <unistd.h>
-   int getentropy(void *buffer, size_t length);
-#endif
+#include <sys/random.h>
 
 #define RECYCLE 1
 #define NO_RECYCLE 0
