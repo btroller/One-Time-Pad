@@ -6,8 +6,6 @@ SOURCES = $(wildcard *.c)
 HEADERS = $(wildcard *.h)
 OBJECTS = $(SOURCES:.c=.o)
 
-all: $(TARGET)
-
 $(TARGET): $(OBJECTS)
 	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJECTS)
 
@@ -16,3 +14,6 @@ $(OBJECTS): $(SOURCES) $(HEADERS)
 
 clean:
 	rm $(TARGET) $(OBJECTS)
+
+test:
+	./test.sh

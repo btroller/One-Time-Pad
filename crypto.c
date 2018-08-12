@@ -1,4 +1,3 @@
-/* TODO: Deal with <sys/random.h> error in build */
 #include "crypto.h"
 #include <stdio.h>
 #include <stdlib.h>
