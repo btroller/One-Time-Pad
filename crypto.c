@@ -55,7 +55,7 @@ void otp_encrypt(ArgInfo *argInfoP) {
          warningShown = 1;
       }
 
-      inByte += shiftBy;
+      inByte = inByte ^ shiftBy;
       writeByte(inByte, argInfoP->outFile);
    }
 }
@@ -68,7 +68,7 @@ void otp_decrypt(ArgInfo *argInfoP) {
    while ((c = getc(argInfoP->inFile)) != EOF) {
       inByte = c;
       getShift(argInfoP, &shiftBy);
-      inByte -= shiftBy;
+      inByte = inByte ^ shiftBy;
       writeByte(inByte, argInfoP->outFile);
    }
 }
