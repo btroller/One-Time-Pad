@@ -4,7 +4,7 @@
 `otp` is a simple C-based tool for pseudorandomly generating [one-time pads](https://en.wikipedia.org/wiki/One-time_pad), as well as encrypting and decrypting data using them.
 
 ### Disclaimer
-**Don't use this tool for anything serious.** I'm no expert in computer security or cryptography. The operation of adding and subtracting bytes to encrypt and decrypt from pads is simple enough, but still could be flawed. This tool **definitley** doesn't generate truly random pads.
+**Don't use this tool for anything serious.** I'm no expert in computer security or cryptography. The operation of XORing bytes to encrypt and decrypt from pads is simple enough, but still could be flawed. This tool **definitley** doesn't generate truly random pads.
 
 ## Use
 To use `otp`, invoke it with one of the following formats:
