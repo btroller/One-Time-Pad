@@ -6,9 +6,11 @@
 
 #define RECYCLE 1
 #define NO_RECYCLE 0
-#define MAX_GETENTROPY_LEN 256
+#define MAX_GETENTROPY_LEN 256 /* The maximum number of bytes a call to `getentropy(...)` can produce */
 
-unsigned char getShift(ArgInfo *argInfoP, unsigned char *shiftp) {
+/* Puts the next byte from `argInfoP->padFile` to XOR with into `randBP`.
+ * Returns `RECYCLE` if the pad had to be rewound, or `NO_RECYCLE` otherwise */
+unsigned char getShift(ArgInfo *argInfoP, unsigned char *randBP) {
    int c;
 
    /* Get the next char in padfile */
@@ -16,24 +18,26 @@ unsigned char getShift(ArgInfo *argInfoP, unsigned char *shiftp) {
       /* If end of padfile is reached, rewind and start from its beginning */
       rewind(argInfoP->padFile);
       c = getc(argInfoP->padFile);
-      *shiftp = (unsigned char)c;
+      *randBP = (unsigned char)c;
 
       return RECYCLE;
    }
 
-   *shiftp = (unsigned char)c;
+   *randBP = (unsigned char)c;
 
    return NO_RECYCLE;
 }
 
+/* Writes the byte `inByte` to the file `out */
 void writeByte(unsigned char inByte, FILE *out) {
-   /* Use buffered output to speed up writing */
+   /* Attempts to use buffered output to speed up writing */
    if (fprintf(out, "%c", inByte) == 0) {
       perror(NULL);
       exit(EXIT_FAILURE);
    }
 }
 
+/* Prints a warning about encrypting with a pad shorter than a message */
 void printPadSizeWarning() {
    fprintf(stderr, "Warning: The pad being used is smaller than the");
    fprintf(stderr, " data being encrypted\n");
@@ -41,38 +45,41 @@ void printPadSizeWarning() {
    fprintf(stderr, " pad\n");
 }
 
+/* Encrypts bytes from `argInfoP->inFile` into `argInfoP->outFile` using the pad `argInfoP->padFile` */
 void otp_encrypt(ArgInfo *argInfoP) {
    int c;
-   unsigned char inByte, shiftBy, warningShown = 0;
+   unsigned char inByte, randByte, warningShown = 0;
 
    /* Read in another char from inFile */
    while ((c = getc(argInfoP->inFile)) != EOF) {
       inByte = c;
       /* Get next byte from padfile */
-      if (getShift(argInfoP, &shiftBy) == RECYCLE && !warningShown) {
+      if (getShift(argInfoP, &randByte) == RECYCLE && !warningShown) {
          /* If end of pad reached before encryption completes, print warning */
          printPadSizeWarning();
          warningShown = 1;
       }
 
-      inByte = inByte ^ shiftBy;
+      inByte = inByte ^ randByte;
       writeByte(inByte, argInfoP->outFile);
    }
 }
 
+/* Decrypts bytes from `argInfoP->inFile` into `argInfoP->outFile` using the pad `argInfoP->padFile` */
 void otp_decrypt(ArgInfo *argInfoP) {
    int c;
-   unsigned char inByte, shiftBy;
+   unsigned char inByte, randByte;
 
    /* Read in another char from inFile */
    while ((c = getc(argInfoP->inFile)) != EOF) {
       inByte = c;
-      getShift(argInfoP, &shiftBy);
-      inByte = inByte ^ shiftBy;
+      getShift(argInfoP, &randByte);
+      inByte = inByte ^ randByte;
       writeByte(inByte, argInfoP->outFile);
    }
 }
 
+/* Generates a pad described in `argInfoP` */
 void generatePad(ArgInfo *argInfoP) {
    int numBytesWritten, numBytesToGet;
    unsigned char randBits[MAX_GETENTROPY_LEN];
@@ -81,15 +88,17 @@ void generatePad(ArgInfo *argInfoP) {
         numBytesWritten += MAX_GETENTROPY_LEN) {
       if ((numBytesToGet = argInfoP->padSize - numBytesWritten) >
           MAX_GETENTROPY_LEN) {
+         /* At most, ask for `MAX_GETENTROPY_LEN` bytes at a time */
          numBytesToGet = MAX_GETENTROPY_LEN;
       }
 
-      /* Get max possible number of random bytes */
+      /* Get appropriate number of random bytes */
       if (getentropy(randBits, numBytesToGet) == -1) {
          perror(NULL);
          exit(EXIT_FAILURE);
       }
 
+      /* Write results of `getentropy(...)` call to `argInfoP->padFile` */
       if (fwrite(randBits, 1, numBytesToGet, argInfoP->padFile) <
           numBytesToGet) {
          perror(NULL);
@@ -98,6 +107,7 @@ void generatePad(ArgInfo *argInfoP) {
    }
 }
 
+/* Evaluates given `argInfoP` */
 void evalArgs(ArgInfo *argInfoP) {
    /* Note: It's not possible for op to be anything other than e, d, or g */
    switch (argInfoP->op) {

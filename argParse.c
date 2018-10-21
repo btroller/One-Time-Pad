@@ -1,3 +1,6 @@
+/* Contains funcitons dealing with parsing of `argv`
+ */
+
 #include "argParse.h"
 #include <limits.h>
 #include <stdio.h>
@@ -5,8 +8,9 @@
 #include <string.h>
 
 #define DEFAULT_PADSIZE 1024
-#define NOT_FOUND -1
+#define NOT_FOUND -1 /* Represents index of nonexistent item in `argv` */
 
+/* Prints a usage message and exits */
 void pUseExit() {
    fprintf(stderr, "Usage: otp -e [-i infile] [-o outfile] -p padfile OR\n");
    fprintf(stderr, "       otp -d [-i infile] [-o outfile] -p padfile OR\n");
@@ -14,6 +18,7 @@ void pUseExit() {
    exit(EXIT_FAILURE);
 }
 
+/* Opens a file with path `fileName` and mode `mode` */
 FILE *openFile(char *fileName, char *mode) {
    FILE *file;
 
@@ -25,6 +30,7 @@ FILE *openFile(char *fileName, char *mode) {
    return file;
 }
 
+/* Returns the index of `toFind` in `argv`, or `NOT_FOUND` otherwise */
 int posInArgv(int argc, char *argv[], char *toFind) {
    int argPos;
 
@@ -37,6 +43,8 @@ int posInArgv(int argc, char *argv[], char *toFind) {
    return NOT_FOUND;
 }
 
+/* Opens a file from path given in `argv` after index `pos` with mode `mode`.
+ * Makes dealing with poorly-formed input easier */
 FILE *openArgFile(int argc, char *argv[], int pos, char *mode) {
    FILE *fp;
 
@@ -50,6 +58,7 @@ FILE *openArgFile(int argc, char *argv[], int pos, char *mode) {
    return fp;
 }
 
+/* Complains if reached EOF in `argInfoP->padFile` */
 void checkPadFileEmpty(ArgInfo *argInfoP) {
    if (getc(argInfoP->padFile) == EOF) {
       fprintf(stderr, "Unable to read from padfile\n");
@@ -57,13 +66,16 @@ void checkPadFileEmpty(ArgInfo *argInfoP) {
       fprintf(stderr, "and that it's not empty\n");
       exit(EXIT_FAILURE);
    }
+   /* Seek back to beginning of file so it seems unaltered to caller */
    rewind(argInfoP->padFile);
 }
 
+/* Parses `argv` into `argInfoP` for an encryption or decryption command */
 void parseEncDec(int argc, char *argv[], ArgInfo *argInfoP) {
 
    int ipos, opos, ppos, remainingArgs = argc - 2;
 
+   /* Search for input flag and path */
    if ((ipos = posInArgv(argc, argv, "-i")) == NOT_FOUND) {
       argInfoP->inFile = stdin;
    } else {
@@ -71,6 +83,7 @@ void parseEncDec(int argc, char *argv[], ArgInfo *argInfoP) {
       remainingArgs -= 2;
    }
 
+   /* Search for output flag and path */
    if ((opos = posInArgv(argc, argv, "-o")) == NOT_FOUND) {
       argInfoP->outFile = stdout;
    } else {
@@ -78,6 +91,7 @@ void parseEncDec(int argc, char *argv[], ArgInfo *argInfoP) {
       remainingArgs -= 2;
    }
 
+   /* Search for pad flag and path */
    if ((ppos = posInArgv(argc, argv, "-p")) == NOT_FOUND) {
       pUseExit();
    } else {
@@ -92,6 +106,7 @@ void parseEncDec(int argc, char *argv[], ArgInfo *argInfoP) {
    checkPadFileEmpty(argInfoP);
 }
 
+/* Parses `argv` into `argInfoP` for a pad generation command */
 void parsePad(int argc, char *argv[], ArgInfo *argInfoP) {
    int ppos, remainingArgs = argc - 2;
 
@@ -122,11 +137,12 @@ void parsePad(int argc, char *argv[], ArgInfo *argInfoP) {
    remainingArgs -= 1;
 
    if (remainingArgs > 0) {
-      /* If extra args are given in argv */
+      /* Too many args given in argv */
       pUseExit();
    }
 }
 
+/* Open files and otherwise initializes `argInfoP from given `argv` */
 void parseArgs(int argc, char *argv[], ArgInfo *argInfoP) {
 
    /* Check that there is a flag to parse */
@@ -156,12 +172,13 @@ void parseArgs(int argc, char *argv[], ArgInfo *argInfoP) {
       parsePad(argc, argv, argInfoP);
       break;
    default:
-      /* If valid operation flag is not found in argv */
+      /* Valid flag not found in argv */
       pUseExit();
       break;
    }
 }
 
+/* Closes an individual `FILE *` with error handling */
 void closeFile(FILE *fp) {
    if (fclose(fp) == EOF) {
       perror(NULL);
@@ -169,12 +186,14 @@ void closeFile(FILE *fp) {
    }
 }
 
+/* Closes all three `FILE *`s in `argInfoP` */
 void closeAllFiles(ArgInfo *argInfoP) {
    closeFile(argInfoP->inFile);
    closeFile(argInfoP->outFile);
    closeFile(argInfoP->padFile);
 }
 
+/* Called to close all open files before exiting */
 void closeFiles(ArgInfo *argInfoP) {
    switch (argInfoP->op) {
    case 'e':
@@ -184,6 +203,7 @@ void closeFiles(ArgInfo *argInfoP) {
       closeAllFiles(argInfoP);
       break;
    case 'g':
+      /* Only need to close `padFile` */
       closeFile(argInfoP->padFile);
       break;
    }

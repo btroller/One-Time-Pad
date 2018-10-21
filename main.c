@@ -1,3 +1,6 @@
+/* The main file for otp
+ */
+
 #include "argParse.h"
 #include "crypto.h"
 #include <stdio.h>
