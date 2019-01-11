@@ -34,3 +34,10 @@ To decrypt a file, `otp` reverses the encryption process by XORing the correspon
 
 ## Installation
 To compile `otp`, clone this repository, change to its directory, and use `make` to compile.
+
+You can also use [Homebrew](https://brew.sh) to install `otp` on a Mac by tapping the GitHub repository `btroller/homebrew-formulae` and installing the `otp` formula there with the following commands in a Bash shell:
+
+```Bash
+brew tap btroller/formulae
+brew install otp
+```
